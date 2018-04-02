@@ -1,0 +1,4 @@
+sources
+"""http://api.data.gov/regulations/v3/documents.json?api_key=orR6EiUkZtfvpFF3Qnr77KWeZXackXd0tr34Gsba&countsOnly=0&encoded=1&dktid=CMS-2017-0092&rpp=1000&po=1"""
+"""http://api.data.gov/regulations/v3/documents.json?api_key=orR6EiUkZtfvpFF3Qnr77KWeZXackXd0tr34Gsba&countsOnly=0&encoded=1&dktid=CMS-2017-0092&rpp=1000&po=2"""
+"""http://api.data.gov/regulations/v3/documents.json?api_key=orR6EiUkZtfvpFF3Qnr77KWeZXackXd0tr34Gsba&countsOnly=0&encoded=1&dktid=CMS-2017-0092&rpp=1000&po=3"""

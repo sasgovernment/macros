@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task runNLS="never" schemaVersion="3.0">
+    <Registration>
+        <Name>extractManyRegulationsResource</Name>
+        <Description>Demonstrates the extractManyRegulationsResource using the Common Task Model functionality.</Description>
+        <GUID>C6AC34BD-D14A-4CF5-BF2F-A110711BF819</GUID>
+        <Procedures>PRINT</Procedures>
+        <Version>3.3</Version>
+        <Links>
+            <Link href="http://www.sas.com">SAS Home page</Link>
+        </Links>
+        <Category>GITHUB</Category>
+    </Registration>
+    <Metadata>
+        <!--- Define the data and roles for this task.    -->
+        <DataSources>
+            <DataSource name="DATASOURCE">
+                <Roles>
+                    <Role maxVars="1" minVars="1" name="VAR1"
+                        order="true" type="C">Required variable (API Calls)</Role>
+                    <Role maxVars="1" minVars="1" name="VAR2"
+                        order="true" type="C">Required variable (DS output)</Role>
+                </Roles>
+            </DataSource>
+        </DataSources>
+        <!--- Define the task options.                   -->
+        <!--- test -->
+        <Options>
+            <Option inputType="string" name="DATATAB">DATA</Option>
+            <Option inputType="string" name="DATAGROUP">DATA</Option>
+            <Option inputType="string" name="ROLESGROUP">ROLES</Option>
+        </Options>
+        
+    </Metadata>
+    <!--- Define the UI for task options                         -->
+    <!--- The UI engine will determine the best respresentation. -->
+    <UI>
+        <Container option="DATATAB">
+            <Group open="true" option="DATAGROUP">
+                <DataItem data="DATASOURCE"/>
+            </Group>
+            <Group open="true" option="ROLESGROUP">
+                <RoleItem role="VAR1"/>
+                <RoleItem role="VAR2"/>
+            </Group>
+        </Container>
+    </UI>
+    <!--- Define the velocity code template.        -->
+    <CodeTemplate><![CDATA[
+options FULLSTIMER noxwait mprint mlogic sasautos=(sasautos,
+"C:\SAS\code\macros\GITHUB\extractRegulations");
+/*
+ * Dump out table information and roles.
+ */ 
+%put DATASET=$DATASOURCE;
+%put SASLIBRARY=$SASLIBRARY;
+%put SASTABLE=$SASTABLE; 
+#if( $VAR1.size() > 0 )%put VAR1=#foreach( $item in $VAR1 )$item #end;#end
+#if( $VAR1.size() > 0 )%let VAR1=#foreach( $item in $VAR1 )$item #end;#end
+
+
+
+%let mySrcDSName=$DATASOURCE;
+%extractManyRegulationsResource(APIList=&mySrcDSName)
+
+
+/* Just open the dataset for now. 
+%web_open_table(work.R_locations_geocoded);
+*/
+
+		]]></CodeTemplate>
+</Task>
