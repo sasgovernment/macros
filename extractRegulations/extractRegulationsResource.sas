@@ -11,12 +11,12 @@
 /* Output(s): sas7bdat with all the comments                                       */
 /*                                                                                 */
 /* ---------------------THE SECTION BELOW IS FOR FUTURE ENHANCEMENTS-------------- */
-/* Date Modified: TBD                                                              */
-/* Modified by: TBD                                                                */
-/* Reason for Modification: TBD                                                    */
+/* Date Modified: 08/15/2019                                                       */
+/* Modified by: Manuel Figallo                                                     */
+/* Reason for Modification: Exception Handling. Attachment Count                   */
 /* Modification Made: TBD                                                          */
 /***********************************************************************************/
-options noquotelenmax;
+options noquotelenmax noserror;
 
 %macro extractRegulationsResource(remoteURL=, localDataset=);
 	%if &remoteURL= %then
@@ -49,6 +49,7 @@ options noquotelenmax;
 
 			/* Keeping these variables for output */
 			dcl nvarchar(128) agencyAcronym;
+			dcl nvarchar(128) attachmentCount;
 			dcl nvarchar(128) commentDueDate;
 			dcl nvarchar(128) commentStartDate;
 
@@ -77,6 +78,12 @@ options noquotelenmax;
 						do;
 							j.getNextToken( rc, token, tokenType, parseFlags);
 							agencyAcronym=token;
+						end;
+
+					if (token eq 'attachmentCount') then
+						do;
+							j.getNextToken( rc, token, tokenType, parseFlags);
+							attachmentCount=token;
 						end;
 
 					if (token eq 'commentDueDate') then
