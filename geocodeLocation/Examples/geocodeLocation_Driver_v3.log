@@ -1,0 +1,751 @@
+1                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M3) 
+      Licensed to EEC DEMO CENTER PROGRAM, Site 70196152.
+NOTE: This session is executing on the X64_S08R2  platform.
+
+
+
+NOTE: Updated analytical products:
+      
+      SAS/STAT 14.1
+      SAS/QC 14.1
+
+NOTE: Additional host information:
+
+ X64_S08R2 WIN 6.1.7601 Service Pack 1 Server
+
+NOTE: SAS initialization used:
+      real time           1.56 seconds
+      cpu time            0.23 seconds
+      
+1          options FULLSTIMER noxwait mprint mlogic sasautos=(sasautos,
+2          "C:\SAS\code\macros\GITHUB\geocodeLocation");
+3          
+4          libname tmp1 'C:\SAS\code\macros\GITHUB\geocodeLocation\Examples\data';
+NOTE: Libref TMP1 was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: C:\SAS\code\macros\GITHUB\geocodeLocation\Examples\data
+5          
+6          /*Example 1 - Basic*/
+7          %let mySrcDSName=tmp1.locations;
+8          %geocodeLocation(SrcDSName=&mySrcDSName)
+MLOGIC:  Beginning compilation of GEOCODELOCATION using the autocall file 
+      C:\SAS\code\macros\GITHUB\geocodeLocation\geocodelocation.sas.
+MLOGIC:  Ending compilation of GEOCODELOCATION.
+MLOGIC(GEOCODELOCATION):  Beginning execution.
+MLOGIC(GEOCODELOCATION):  This macro was compiled from the autocall file 
+      C:\SAS\code\macros\GITHUB\geocodeLocation\geocodelocation.sas
+MLOGIC(GEOCODELOCATION):  Parameter SRCDSNAME has value tmp1.locations
+MLOGIC(GEOCODELOCATION):  Parameter SRCVARNAME has value 
+MLOGIC(GEOCODELOCATION):  Parameter TARGETDSNAME has value 
+MLOGIC(GEOCODELOCATION):  %IF condition &SrcDSName= is FALSE
+MLOGIC(GEOCODELOCATION):  %IF condition &SrcVarName eq is TRUE
+MLOGIC(GEOCODELOCATION):  %LET (variable name is SRCVARNAME)
+MLOGIC(GEOCODELOCATION):  %IF condition &TargetDSName eq is TRUE
+MLOGIC(GEOCODELOCATION):  %LET (variable name is TARGETDSNAME)
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   call symput( "numlocations" ,trim(left(numlocations)));
+MPRINT(GEOCODELOCATION):   stop;
+MPRINT(GEOCODELOCATION):   set tmp1.locations nobs=numlocations;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: Numeric values have been converted to character values at the places given by: 
+      (Line):(Column).
+2                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+      8:59   
+NOTE: DATA statement used (Total process time):
+      real time           0.02 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.03 seconds
+      memory              1507.28k
+      OS Memory           8276.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        1  Switch Count  0
+      
+
+MLOGIC(GEOCODELOCATION):  %PUT &numlocations
+5
+MPRINT(GEOCODELOCATION):   proc sql noprint;
+MPRINT(GEOCODELOCATION):   create table r_locations_geocoded ( ID char ( 200 ), address char ( 
+200 ), status char ( 2 ), formatted_address char ( 80 ), lat char ( 11 ), lng char ( 11 ), 
+partial_match char ( 5 ), location_type char (30) ) ;
+NOTE: Table WORK.R_LOCATIONS_GEOCODED created, with 0 rows and 8 columns.
+MPRINT(GEOCODELOCATION):   quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.01 seconds
+      memory              399.40k
+      OS Memory           8532.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        2  Switch Count  0
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop beginning; index variable I; start value is 1; stop value is 
+      5; by value is 1.  
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   nrec = 1;
+MPRINT(GEOCODELOCATION):   set tmp1.locations point=nrec;
+MPRINT(GEOCODELOCATION):   call symputx('id',id);
+MPRINT(GEOCODELOCATION):   call symput('a1',translate(trim(location),'+',' '));
+MPRINT(GEOCODELOCATION):   call symput('add',trim(location));
+MPRINT(GEOCODELOCATION):   stop;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              889.00k
+      OS Memory           8532.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        3  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   filename y url 
+"http://maps.google.com/maps/api/geocode/xml?address=Spring+Garden+ST+Philadelphia,+PA+19101&senso
+r=true";
+3                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   filename Googlexm 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml';
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   infile y lrecl= 32000 pad;
+MPRINT(GEOCODELOCATION):   input;
+MPRINT(GEOCODELOCATION):   file Googlexm;
+MPRINT(GEOCODELOCATION):   put _infile_;
+MPRINT(GEOCODELOCATION):   *******XML code;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: The infile Y is:
+      
+      Filename=http://maps.google.com/maps/api/geocode/xml?address=Spring+Garden+ST+Philadelphia,+
+      PA+19101&sensor=true,
+      Local Host Name=sasbap,
+      Local Host IP addr=127.0.0.1,
+      Service Hostname Name=iad23s44-in-f14.1e100.net,
+      Service IP addr=216.58.217.174,
+      Service Name=httpd,Service Portno=80,
+      Lrecl=32000,Recfm=Variable
+
+NOTE: The file GOOGLEXM is:
+      Filename=C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=05Dec2017:17:33:47,
+      Create Time=05Dec2017:17:29:06
+
+NOTE: 66 records were read from the infile Y.
+      The minimum record length was 9.
+      The maximum record length was 80.
+NOTE: 66 records were written to the file GOOGLEXM.
+      The minimum record length was 32000.
+      The maximum record length was 32000.
+NOTE: DATA statement used (Total process time):
+      real time           0.51 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.03 seconds
+      memory              735.15k
+      OS Memory           8532.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        4  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   filename SXLEMAP 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.map';
+MPRINT(GEOCODELOCATION):   libname Googlexm xml xmlmap=SXLEMAP access=READONLY;
+NOTE: Libref GOOGLEXM was successfully assigned as follows: 
+      Engine:        XML 
+      Physical Name: GOOGLEXM
+MPRINT(GEOCODELOCATION):   data results;
+MPRINT(GEOCODELOCATION):   *mf *format date Date9.;
+MPRINT(GEOCODELOCATION):   address=symget( 'add' );
+MPRINT(GEOCODELOCATION):   ID=symget( 'ID' );
+4                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   set Googlexm.result;
+MPRINT(GEOCODELOCATION):   * FROM RESULT IN FILE '';
+MPRINT(GEOCODELOCATION):   run;
+NOTE: There were 1 observations read from the data set GOOGLEXM.RESULT.
+NOTE: The data set WORK.RESULTS has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.17 seconds
+      user cpu time       0.09 seconds
+      system cpu time     0.00 seconds
+      memory              857.70k
+      OS Memory           8788.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        5  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   ********Add to the Dataset to hold all geocoded lat and lng;
+MPRINT(GEOCODELOCATION):   data r_locations_geocoded;
+MPRINT(GEOCODELOCATION):   set r_locations_geocoded results;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: There were 0 observations read from the data set WORK.R_LOCATIONS_GEOCODED.
+NOTE: There were 1 observations read from the data set WORK.RESULTS.
+NOTE: The data set WORK.R_LOCATIONS_GEOCODED has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.03 seconds
+      memory              1049.21k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:47 PM
+      Step Count                        6  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   time_wait = sleep(2);
+MPRINT(GEOCODELOCATION):   ******Sleep 2 seconds;
+MPRINT(GEOCODELOCATION):   run;
+NOTE: DATA statement used (Total process time):
+      real time           2.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              735.53k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:49 PM
+      Step Count                        7  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop index variable I is now 2; loop will iterate again.
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   nrec = 2;
+MPRINT(GEOCODELOCATION):   set tmp1.locations point=nrec;
+MPRINT(GEOCODELOCATION):   call symputx('id',id);
+MPRINT(GEOCODELOCATION):   call symput('a1',translate(trim(location),'+',' '));
+5                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   call symput('add',trim(location));
+MPRINT(GEOCODELOCATION):   stop;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              840.53k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:49 PM
+      Step Count                        8  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   filename y url 
+"http://maps.google.com/maps/api/geocode/xml?address=200+S+Broad+St+Philadelphia,+PA+19102&sensor=
+true";
+MPRINT(GEOCODELOCATION):   filename Googlexm 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml';
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   infile y lrecl= 32000 pad;
+MPRINT(GEOCODELOCATION):   input;
+MPRINT(GEOCODELOCATION):   file Googlexm;
+MPRINT(GEOCODELOCATION):   put _infile_;
+MPRINT(GEOCODELOCATION):   *******XML code;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: The infile Y is:
+      
+      Filename=http://maps.google.com/maps/api/geocode/xml?address=200+S+Broad+St+Philadelphia,+PA
+      +19102&sensor=true,
+      Local Host Name=sasbap,
+      Local Host IP addr=127.0.0.1,
+      Service Hostname Name=iad23s44-in-f14.1e100.net,
+      Service IP addr=216.58.217.174,
+      Service Name=httpd,Service Portno=80,
+      Lrecl=32000,Recfm=Variable
+
+NOTE: The file GOOGLEXM is:
+      Filename=C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=05Dec2017:17:33:50,
+      Create Time=05Dec2017:17:29:06
+
+NOTE: 81 records were read from the infile Y.
+      The minimum record length was 9.
+      The maximum record length was 84.
+NOTE: 81 records were written to the file GOOGLEXM.
+      The minimum record length was 32000.
+      The maximum record length was 32000.
+NOTE: DATA statement used (Total process time):
+      real time           0.67 seconds
+      user cpu time       0.01 seconds
+6                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+      system cpu time     0.00 seconds
+      memory              732.90k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:50 PM
+      Step Count                        9  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   filename SXLEMAP 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.map';
+MPRINT(GEOCODELOCATION):   libname Googlexm xml xmlmap=SXLEMAP access=READONLY;
+NOTE: Libref GOOGLEXM was successfully assigned as follows: 
+      Engine:        XML 
+      Physical Name: GOOGLEXM
+MPRINT(GEOCODELOCATION):   data results;
+MPRINT(GEOCODELOCATION):   *mf *format date Date9.;
+MPRINT(GEOCODELOCATION):   address=symget( 'add' );
+MPRINT(GEOCODELOCATION):   ID=symget( 'ID' );
+MPRINT(GEOCODELOCATION):   set Googlexm.result;
+MPRINT(GEOCODELOCATION):   * FROM RESULT IN FILE '';
+MPRINT(GEOCODELOCATION):   run;
+NOTE: There were 1 observations read from the data set GOOGLEXM.RESULT.
+NOTE: The data set WORK.RESULTS has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.14 seconds
+      user cpu time       0.12 seconds
+      system cpu time     0.03 seconds
+      memory              856.59k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:51 PM
+      Step Count                        10  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   ********Add to the Dataset to hold all geocoded lat and lng;
+MPRINT(GEOCODELOCATION):   data r_locations_geocoded;
+MPRINT(GEOCODELOCATION):   set r_locations_geocoded results;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: There were 1 observations read from the data set WORK.R_LOCATIONS_GEOCODED.
+NOTE: There were 1 observations read from the data set WORK.RESULTS.
+NOTE: The data set WORK.R_LOCATIONS_GEOCODED has 2 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              1049.21k
+      OS Memory           9556.00k
+      Timestamp           12/05/2017 05:33:51 PM
+      Step Count                        11  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   time_wait = sleep(2);
+MPRINT(GEOCODELOCATION):   ******Sleep 2 seconds;
+7                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   run;
+NOTE: DATA statement used (Total process time):
+      real time           2.01 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.03 seconds
+      memory              749.31k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:53 PM
+      Step Count                        12  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop index variable I is now 3; loop will iterate again.
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   nrec = 3;
+MPRINT(GEOCODELOCATION):   set tmp1.locations point=nrec;
+MPRINT(GEOCODELOCATION):   call symputx('id',id);
+MPRINT(GEOCODELOCATION):   call symput('a1',translate(trim(location),'+',' '));
+MPRINT(GEOCODELOCATION):   call symput('add',trim(location));
+MPRINT(GEOCODELOCATION):   stop;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              890.62k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:53 PM
+      Step Count                        13  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   filename y url 
+"http://maps.google.com/maps/api/geocode/xml?address=230+S+15th+St+Philadelphia,+PA+19102&sensor=t
+rue";
+MPRINT(GEOCODELOCATION):   filename Googlexm 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml';
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   infile y lrecl= 32000 pad;
+MPRINT(GEOCODELOCATION):   input;
+MPRINT(GEOCODELOCATION):   file Googlexm;
+MPRINT(GEOCODELOCATION):   put _infile_;
+MPRINT(GEOCODELOCATION):   *******XML code;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: The infile Y is:
+      
+      Filename=http://maps.google.com/maps/api/geocode/xml?address=230+S+15th+St+Philadelphia,+PA+
+      19102&sensor=true,
+      Local Host Name=sasbap,
+      Local Host IP addr=127.0.0.1,
+      Service Hostname Name=iad23s44-in-f14.1e100.net,
+      Service IP addr=216.58.217.174,
+      Service Name=httpd,Service Portno=80,
+8                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+      Lrecl=32000,Recfm=Variable
+
+NOTE: The file GOOGLEXM is:
+      Filename=C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=05Dec2017:17:33:53,
+      Create Time=05Dec2017:17:29:06
+
+NOTE: 76 records were read from the infile Y.
+      The minimum record length was 9.
+      The maximum record length was 83.
+NOTE: 76 records were written to the file GOOGLEXM.
+      The minimum record length was 32000.
+      The maximum record length was 32000.
+NOTE: DATA statement used (Total process time):
+      real time           0.57 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.03 seconds
+      memory              732.90k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:53 PM
+      Step Count                        14  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   filename SXLEMAP 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.map';
+MPRINT(GEOCODELOCATION):   libname Googlexm xml xmlmap=SXLEMAP access=READONLY;
+NOTE: Libref GOOGLEXM was successfully assigned as follows: 
+      Engine:        XML 
+      Physical Name: GOOGLEXM
+MPRINT(GEOCODELOCATION):   data results;
+MPRINT(GEOCODELOCATION):   *mf *format date Date9.;
+MPRINT(GEOCODELOCATION):   address=symget( 'add' );
+MPRINT(GEOCODELOCATION):   ID=symget( 'ID' );
+MPRINT(GEOCODELOCATION):   set Googlexm.result;
+MPRINT(GEOCODELOCATION):   * FROM RESULT IN FILE '';
+MPRINT(GEOCODELOCATION):   run;
+NOTE: There were 1 observations read from the data set GOOGLEXM.RESULT.
+NOTE: The data set WORK.RESULTS has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      user cpu time       0.10 seconds
+      system cpu time     0.01 seconds
+      memory              856.59k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:53 PM
+      Step Count                        15  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   ********Add to the Dataset to hold all geocoded lat and lng;
+MPRINT(GEOCODELOCATION):   data r_locations_geocoded;
+MPRINT(GEOCODELOCATION):   set r_locations_geocoded results;
+MPRINT(GEOCODELOCATION):   run;
+9                                         The SAS System           17:33 Tuesday, December 5, 2017
+
+
+NOTE: There were 2 observations read from the data set WORK.R_LOCATIONS_GEOCODED.
+NOTE: There were 1 observations read from the data set WORK.RESULTS.
+NOTE: The data set WORK.R_LOCATIONS_GEOCODED has 3 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              1065.09k
+      OS Memory           9556.00k
+      Timestamp           12/05/2017 05:33:53 PM
+      Step Count                        16  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   time_wait = sleep(2);
+MPRINT(GEOCODELOCATION):   ******Sleep 2 seconds;
+MPRINT(GEOCODELOCATION):   run;
+NOTE: DATA statement used (Total process time):
+      real time           2.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.01 seconds
+      memory              735.53k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:55 PM
+      Step Count                        17  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop index variable I is now 4; loop will iterate again.
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   nrec = 4;
+MPRINT(GEOCODELOCATION):   set tmp1.locations point=nrec;
+MPRINT(GEOCODELOCATION):   call symputx('id',id);
+MPRINT(GEOCODELOCATION):   call symput('a1',translate(trim(location),'+',' '));
+MPRINT(GEOCODELOCATION):   call symput('add',trim(location));
+MPRINT(GEOCODELOCATION):   stop;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              890.62k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:55 PM
+      Step Count                        18  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   filename y url 
+"http://maps.google.com/maps/api/geocode/xml?address=1435+Walnut+ST+Philadelphia,+PA+19102&sensor=
+true";
+MPRINT(GEOCODELOCATION):   filename Googlexm 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml';
+10                                        The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   infile y lrecl= 32000 pad;
+MPRINT(GEOCODELOCATION):   input;
+MPRINT(GEOCODELOCATION):   file Googlexm;
+MPRINT(GEOCODELOCATION):   put _infile_;
+MPRINT(GEOCODELOCATION):   *******XML code;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: The infile Y is:
+      
+      Filename=http://maps.google.com/maps/api/geocode/xml?address=1435+Walnut+ST+Philadelphia,+PA
+      +19102&sensor=true,
+      Local Host Name=sasbap,
+      Local Host IP addr=127.0.0.1,
+      Service Hostname Name=iad23s44-in-f14.1e100.net,
+      Service IP addr=216.58.217.174,
+      Service Name=httpd,Service Portno=80,
+      Lrecl=32000,Recfm=Variable
+
+NOTE: The file GOOGLEXM is:
+      Filename=C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=05Dec2017:17:33:56,
+      Create Time=05Dec2017:17:29:06
+
+NOTE: 81 records were read from the infile Y.
+      The minimum record length was 9.
+      The maximum record length was 84.
+NOTE: 81 records were written to the file GOOGLEXM.
+      The minimum record length was 32000.
+      The maximum record length was 32000.
+NOTE: DATA statement used (Total process time):
+      real time           0.75 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.01 seconds
+      memory              746.68k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:56 PM
+      Step Count                        19  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   filename SXLEMAP 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.map';
+MPRINT(GEOCODELOCATION):   libname Googlexm xml xmlmap=SXLEMAP access=READONLY;
+NOTE: Libref GOOGLEXM was successfully assigned as follows: 
+      Engine:        XML 
+      Physical Name: GOOGLEXM
+MPRINT(GEOCODELOCATION):   data results;
+MPRINT(GEOCODELOCATION):   *mf *format date Date9.;
+MPRINT(GEOCODELOCATION):   address=symget( 'add' );
+MPRINT(GEOCODELOCATION):   ID=symget( 'ID' );
+MPRINT(GEOCODELOCATION):   set Googlexm.result;
+MPRINT(GEOCODELOCATION):   * FROM RESULT IN FILE '';
+11                                        The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   run;
+NOTE: There were 1 observations read from the data set GOOGLEXM.RESULT.
+NOTE: The data set WORK.RESULTS has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.05 seconds
+      user cpu time       0.04 seconds
+      system cpu time     0.00 seconds
+      memory              856.59k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:56 PM
+      Step Count                        20  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   ********Add to the Dataset to hold all geocoded lat and lng;
+MPRINT(GEOCODELOCATION):   data r_locations_geocoded;
+MPRINT(GEOCODELOCATION):   set r_locations_geocoded results;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: There were 3 observations read from the data set WORK.R_LOCATIONS_GEOCODED.
+NOTE: There were 1 observations read from the data set WORK.RESULTS.
+NOTE: The data set WORK.R_LOCATIONS_GEOCODED has 4 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.01 seconds
+      memory              1049.21k
+      OS Memory           9556.00k
+      Timestamp           12/05/2017 05:33:56 PM
+      Step Count                        21  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   time_wait = sleep(2);
+MPRINT(GEOCODELOCATION):   ******Sleep 2 seconds;
+MPRINT(GEOCODELOCATION):   run;
+NOTE: DATA statement used (Total process time):
+      real time           2.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.01 seconds
+      memory              735.53k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:58 PM
+      Step Count                        22  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop index variable I is now 5; loop will iterate again.
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   nrec = 5;
+MPRINT(GEOCODELOCATION):   set tmp1.locations point=nrec;
+MPRINT(GEOCODELOCATION):   call symputx('id',id);
+MPRINT(GEOCODELOCATION):   call symput('a1',translate(trim(location),'+',' '));
+MPRINT(GEOCODELOCATION):   call symput('add',trim(location));
+MPRINT(GEOCODELOCATION):   stop;
+12                                        The SAS System           17:33 Tuesday, December 5, 2017
+
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              837.68k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:33:58 PM
+      Step Count                        23  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   filename y url 
+"http://maps.google.com/maps/api/geocode/xml?address=19102&sensor=true";
+MPRINT(GEOCODELOCATION):   filename Googlexm 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml';
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   infile y lrecl= 32000 pad;
+MPRINT(GEOCODELOCATION):   input;
+MPRINT(GEOCODELOCATION):   file Googlexm;
+MPRINT(GEOCODELOCATION):   put _infile_;
+MPRINT(GEOCODELOCATION):   *******XML code;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: The infile Y is:
+      Filename=http://maps.google.com/maps/api/geocode/xml?address=19102&sensor=true,
+      Local Host Name=sasbap,
+      Local Host IP addr=127.0.0.1,
+      Service Hostname Name=iad23s44-in-f14.1e100.net,
+      Service IP addr=216.58.217.174,
+      Service Name=httpd,Service Portno=80,
+      Lrecl=32000,Recfm=Variable
+
+NOTE: The file GOOGLEXM is:
+      Filename=C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.xml,
+      RECFM=V,LRECL=32767,File Size (bytes)=0,
+      Last Modified=05Dec2017:17:33:59,
+      Create Time=05Dec2017:17:29:06
+
+NOTE: 67 records were read from the infile Y.
+      The minimum record length was 9.
+      The maximum record length was 68.
+NOTE: 67 records were written to the file GOOGLEXM.
+      The minimum record length was 32000.
+      The maximum record length was 32000.
+NOTE: DATA statement used (Total process time):
+      real time           0.70 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.03 seconds
+      memory              732.90k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:59 PM
+      Step Count                        24  Switch Count  2
+13                                        The SAS System           17:33 Tuesday, December 5, 2017
+
+      
+
+MPRINT(GEOCODELOCATION):   filename SXLEMAP 
+'C:\SAS\code\macros\GITHUB\geocodeLocation\geoCoding_GoogleXML.map';
+MPRINT(GEOCODELOCATION):   libname Googlexm xml xmlmap=SXLEMAP access=READONLY;
+NOTE: Libref GOOGLEXM was successfully assigned as follows: 
+      Engine:        XML 
+      Physical Name: GOOGLEXM
+MPRINT(GEOCODELOCATION):   data results;
+MPRINT(GEOCODELOCATION):   *mf *format date Date9.;
+MPRINT(GEOCODELOCATION):   address=symget( 'add' );
+MPRINT(GEOCODELOCATION):   ID=symget( 'ID' );
+MPRINT(GEOCODELOCATION):   set Googlexm.result;
+MPRINT(GEOCODELOCATION):   * FROM RESULT IN FILE '';
+MPRINT(GEOCODELOCATION):   run;
+NOTE: There were 1 observations read from the data set GOOGLEXM.RESULT.
+NOTE: The data set WORK.RESULTS has 1 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.13 seconds
+      user cpu time       0.12 seconds
+      system cpu time     0.01 seconds
+      memory              856.59k
+      OS Memory           9044.00k
+      Timestamp           12/05/2017 05:33:59 PM
+      Step Count                        25  Switch Count  2
+      
+
+MPRINT(GEOCODELOCATION):   ********Add to the Dataset to hold all geocoded lat and lng;
+MPRINT(GEOCODELOCATION):   data r_locations_geocoded;
+MPRINT(GEOCODELOCATION):   set r_locations_geocoded results;
+MPRINT(GEOCODELOCATION):   run;
+
+NOTE: There were 4 observations read from the data set WORK.R_LOCATIONS_GEOCODED.
+NOTE: There were 1 observations read from the data set WORK.RESULTS.
+NOTE: The data set WORK.R_LOCATIONS_GEOCODED has 5 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              1049.21k
+      OS Memory           9556.00k
+      Timestamp           12/05/2017 05:33:59 PM
+      Step Count                        26  Switch Count  0
+      
+
+MPRINT(GEOCODELOCATION):   data _null_;
+MPRINT(GEOCODELOCATION):   time_wait = sleep(2);
+MPRINT(GEOCODELOCATION):   ******Sleep 2 seconds;
+MPRINT(GEOCODELOCATION):   run;
+NOTE: DATA statement used (Total process time):
+      real time           2.01 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.01 seconds
+14                                        The SAS System           17:33 Tuesday, December 5, 2017
+
+      memory              735.53k
+      OS Memory           9300.00k
+      Timestamp           12/05/2017 05:34:01 PM
+      Step Count                        27  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  %DO loop index variable I is now 6; loop will not iterate again.
+MPRINT(GEOCODELOCATION):   proc datasets lib=work nolist;
+MPRINT(GEOCODELOCATION):   delete results;
+MPRINT(GEOCODELOCATION):   quit;
+
+NOTE: Deleting WORK.RESULTS (memtype=DATA).
+NOTE: PROCEDURE DATASETS used (Total process time):
+      real time           0.06 seconds
+      user cpu time       0.04 seconds
+      system cpu time     0.01 seconds
+      memory              2006.35k
+      OS Memory           10324.00k
+      Timestamp           12/05/2017 05:34:01 PM
+      Step Count                        28  Switch Count  1
+      
+
+MLOGIC(GEOCODELOCATION):  Ending execution.
+
+NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
+NOTE: The SAS System used:
+      real time           16.37 seconds
+      user cpu time       0.82 seconds
+      system cpu time     0.56 seconds
+      memory              8913.62k
+      OS Memory           10324.00k
+      Timestamp           12/05/2017 05:34:01 PM
+      Step Count                        28  Switch Count  128
+      
